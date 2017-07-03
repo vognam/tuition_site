@@ -25,7 +25,7 @@ SECRET_KEY = 'jhp2cq*zj2h&wahic*#j5@l$ss^cdk01hsn(nx$mmsa9ka0-%3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['51177155.ngrok.io', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -121,3 +121,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# Email
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#DEFAULT_FROM_EMAIL = 'testing@example.com'
+#EMAIL_HOST_USER = ''
+#EMAIL_HOST_PASSWORD = ''
+#EMAIL_USE_TLS = False
+#EMAIL_PORT = 1025

@@ -1,0 +1,28 @@
+.top-buffer {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+@media (min-width: 768px) {
+    .vertical-center {
+        min-height: 100%; /* Fallback for browsers do NOT support vh unit */
+        /*min-height: 100vh; /* These two lines are counted as one :-)       */
+
+        display: flex;
+        align-items: center;
+    }
+}
+
+.col-xs-12 {
+    padding-top: 25px;
+}
+
+body {
+    font-family: 'Bellefair', serif;
+    font-size: 24px;
+}
+
+div[class^='col-']{
+    padding-right:30px;
+    padding-left:30px;
+}

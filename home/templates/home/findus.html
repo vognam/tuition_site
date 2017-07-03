@@ -1,0 +1,73 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Find us{% endblock %}
+{% block css %}
+    <style>
+       #map {
+        height: 400px;
+        width: 100%;
+       }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="page-header text-center">Find us</h1>
+    <p class="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed vulputate nisi. Fusce tristique libero eu lorem elementum, ac rutrum leo posuere. In ac faucibus velit, in laoreet metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Suspendisse lectus lorem, congue ac ex in, ullamcorper faucibus erat. Proin et nisl vitae dui congue ultrices volutpat in diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In dignissim mi at elit sollicitudin, eget luctus lectus efficitur. Aenean eget tellus nec massa vestibulum maximus.</p>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-6">
+            <h2 class="page-header">Where we are</h2>
+            <!--Google map showing our location-->
+            <!--Free until exceeding 25,000 map loads per 24 hours-->
+
+            <div id="map"></div>
+            <script>
+              function initMap() {
+                var uluru = {lat: 51.393738, lng: -0.111487};
+                var map = new google.maps.Map(document.getElementById('map'), {
+                  zoom: 16,
+                  center: uluru
+                });
+                var marker = new google.maps.Marker({
+                  position: uluru,
+                  map: map
+                });
+              }
+            </script>
+            <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAi9KcguxtDTIsgU2y-PgYb0TSqz_SKnBE&callback=initMap">
+            </script>
+
+
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            <h2 class="page-header">Contact Us</h2>
+            <address>
+                <strong>Address</strong> <br>
+                Some Road<br>
+                Some Town <br>
+                Some Postcode <br>
+            </address>
+            <address>
+                <strong>Email</strong><br>
+                <a href="mailto:#">first.last@example.com</a>
+            </address>
+            <address>
+                <strong>Phone Number</strong><br>
+                123456789
+            </address>
+            <!-- TODO - html for emailing
+            <form role="form" action="" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="button btn-primary">Submit</button>
+            </form>
+            -->
+        </div>
+    </div>
+</div>
+
+{% endblock %}
