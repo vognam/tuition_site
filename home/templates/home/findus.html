@@ -14,7 +14,14 @@
 {% block body %}
 <div class="container">
     <h1 class="page-header text-center">Find us</h1>
-    <p class="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed vulputate nisi. Fusce tristique libero eu lorem elementum, ac rutrum leo posuere. In ac faucibus velit, in laoreet metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Suspendisse lectus lorem, congue ac ex in, ullamcorper faucibus erat. Proin et nisl vitae dui congue ultrices volutpat in diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In dignissim mi at elit sollicitudin, eget luctus lectus efficitur. Aenean eget tellus nec massa vestibulum maximus.</p>
+    <div class="row">
+        <div class="col-xs-12 col-sm-7">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus pretium faucibus arcu, sit amet venenatis quam hendrerit sodales. Aenean gravida eros id quam cursus, gravida finibus mauris mattis. Aliquam sodales magna ac porttitor egestas. Vestibulum ut massa efficitur, placerat magna quis, sollicitudin ex. Nunc ut bibendum est, eu finibus massa. Fusce fermentum in nunc in scelerisque. Cras et rutrum quam. Proin tristique rhoncus commodo. Praesent euismod, libero quis suscipit mattis, enim ligula mollis ex, in iaculis quam erat nec diam. Mauris id tristique ligula, non hendrerit sapien. Donec hendrerit metus eu imperdiet cursus. Pellentesque sagittis condimentum orci in rhoncus. </p>
+        </div>
+        <div class="col-sm-5 hidden-xs">
+            <img class="img-circle img-responsive" src="{% static 'home/images/earth.jpg' %}">
+        </div>
+    </div>
 </div>
 <div class="container">
     <div class="row">
@@ -26,7 +33,7 @@
             <div id="map"></div>
             <script>
               function initMap() {
-                var uluru = {lat: 51.393738, lng: -0.111487};
+                var uluru = {lat: 51.389705, lng: -0.129041};
                 var map = new google.maps.Map(document.getElementById('map'), {
                   zoom: 16,
                   center: uluru

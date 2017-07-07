@@ -26,3 +26,7 @@ div[class^='col-']{
     padding-right:30px;
     padding-left:30px;
 }
+
+span.glyphicon-arrow-right{
+    font-size: 3em;
+}
