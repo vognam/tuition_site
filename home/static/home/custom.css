@@ -1,3 +1,10 @@
+/*
+colour schemes:
+#ebf5ee
+#d5fff6
+#231352
+ */
+
 .top-buffer {
     margin-top: 30px;
     margin-bottom: 30px;
@@ -20,6 +27,7 @@
 body {
     font-family: 'Bellefair', serif;
     font-size: 24px;
+    background-color: #ebf5ee;
 }
 
 div[class^='col-']{
@@ -29,4 +37,27 @@ div[class^='col-']{
 
 span.glyphicon-arrow-right{
     font-size: 3em;
+}
+
+/*
+.nav {
+    background-color: #231352;
+    border-color: #231352;
+    color: white;
+}
+*/
+
+/* fit logo in navbar */
+.navbar-brand {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-brand img
+{
+    max-height: 100%;
+}
+
+.page-header {
+    border-bottom: 1px solid black;
 }
