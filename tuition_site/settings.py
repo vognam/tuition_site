@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'jhp2cq*zj2h&wahic*#j5@l$ss^cdk01hsn(nx$mmsa9ka0-%3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['www.just11plus.com', '127.0.0.1', 'localhost']
 
