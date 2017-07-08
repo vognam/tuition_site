@@ -7,15 +7,16 @@
 
 
 {% block body %}
-    <!--carousel-->
+
+<!--
     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-  <!-- Indicators -->
+
   <ol class="carousel-indicators">
     <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
     <li data-target="#carousel-example-generic" data-slide-to="1"></li>
   </ol>
 
-  <!-- Wrapper for slides -->
+
   <div class="carousel-inner" role="listbox">
     <div class="item active">
       <img src="{% static 'home/images/concertbg.jpg' %}" alt="bird">
@@ -32,7 +33,7 @@
 
   </div>
 
-  <!-- Controls -->
+
   <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
     <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
     <span class="sr-only">Previous</span>
@@ -42,19 +43,31 @@
     <span class="sr-only">Next</span>
   </a>
 </div>
+-->
+
+    <div class="container-fluid">
+        <div class="jumbotron">
+            <img class="img-responsive" src="{% static 'home/images/carousel1.png' %}"
+        </div>
+    </div>
+
+
 
 <!--welcome block-->
         <div class="container">
         <h1 class="page-header center-block">
-            Welcome
+            What we believe
         </h1>
         <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras fringilla ex ut libero convallis dictum. Phasellus vel suscipit ante. Morbi eget justo molestie, iaculis lorem fringilla, feugiat lacus. Donec imperdiet lacus eget tellus egestas, id maximus massa imperdiet. Morbi leo velit, tempor in nisi et, hendrerit hendrerit velit. Sed pulvinar nec lectus vitae condimentum. Sed pulvinar dui massa, sed laoreet elit vulputate varius. Nullam aliquet lacus in ipsum vestibulum, eget molestie turpis eleifend. Vestibulum consequat lacus et magna dictum, non pulvinar mauris porttitor. Aenean eget metus sapien. Phasellus sed tortor a mi faucibus feugiat et laoreet orci. Proin eget vehicula erat. Praesent purus eros, feugiat sit amet erat ut, rutrum sagittis mi. Nullam mauris massa, faucibus vel posuere nec, feugiat quis lorem. Integer tincidunt metus nec erat vulputate sagittis. Aliquam ac erat iaculis, dictum enim nec, semper velit.
+            On a fundamental level, we believe that every child deserves a first class education, one which provides them with the opportunity to both grow and develop academically, and as individuals. The institution your child attends will to a great degree define the quality of teaching they receive, their secondary school experience and influence the opportunities made available to them in the future. Acknowledging the significance of these exams allows us to ensure that students are sufficiently prepared, well in advance, acquainted to the structure of these examinations and comfortable performing under timed conditions.
+        </p>
+        <p>
+            At Only 11+, we incorporate a computer algorithm to identify the areas on which each student requires immediate review. The algorithm enables us to set exercises tailored to the performance of each individual, so that their weaker areas are developed into future strong points. This practice coupled with our regular review sessions encourages students to master all examination topics.Through analysing the rate of improvement on our classroom tests and homework exercises, we will be able to identify the manner in which your child learns most efficiently. We appreciate that not all children learn identically and therefore, we employ the teaching methods that we find most effective for each student.
         </p>
         </div>
     </div>
 
-<!--info block-->
+<!--info block
     <div class="container-fluid">
     <div class="container">
         <div class="row">
@@ -73,8 +86,10 @@
         </div>
 
     </div>
+-->
 
 <!--our approach section-->
+<!--
 <div class="container">
     <h1 class="page-header">Header for next part</h1>
     <div class="row top-buffer vertical-center">
@@ -107,5 +122,6 @@
         </div>
     </div>
 </div>
+-->
 
 {% endblock %}
