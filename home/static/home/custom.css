@@ -27,7 +27,7 @@ colour schemes:
 body {
     font-family: 'Bellefair', serif;
     font-size: 24px;
-    background-color: #ebf5ee;
+    background-color: floralwhite;
 }
 
 div[class^='col-']{
@@ -41,8 +41,20 @@ span.glyphicon-arrow-right{
 
 /*
 .nav {
-    background-color: #231352;
-    border-color: #231352;
+    background-color: #284695;
+    border-color: #284695;
+    color: white;
+}
+
+.navbar {
+    background-color: #284695;
+    border-color: #284695;
+    color: white;
+}
+
+.navbar-inverse{
+    background-color: #284695;
+    border-color: #284695;
     color: white;
 }
 */
@@ -60,4 +72,16 @@ span.glyphicon-arrow-right{
 
 .page-header {
     border-bottom: 1px solid black;
+}
+
+.glyphicon-refresh{
+    font-size: 100px;
+}
+
+.glyphicon-random{
+    font-size: 100px;
+}
+
+.footer {
+    background-color: lightskyblue;
 }
