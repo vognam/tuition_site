@@ -10,6 +10,17 @@
 
     <link href="https://fonts.googleapis.com/css?family=Bellefair" rel="stylesheet">
 
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-102321299-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
     <script src="{% static 'home/jquery.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'home/bootstrap.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'home/custom.css' %}">
@@ -44,7 +55,7 @@
         <li class="{% if nbar == 'philosophy' %}active{% endif %}"><a href="{% url 'philosophy' %}">Philosophy</a></li>
         <li class="{% if nbar == 'meettheteam' %}active{% endif %}"><a href={%  url 'meettheteam' %}>Meet the Team</a></li>
         <!--<li class="{% if nbar == 'pricing' %}active{% endif %}"><a href="{% url 'pricing' %}">Pricing</a></li>-->
-        <!--<li class="{% if nbar == 'bookings' %}active{% endif %}"><a href="{% url 'bookings' %}">Bookings</a></li>-->
+        <li class="{% if nbar == 'bookings' %}active{% endif %}"><a href="{% url 'bookings' %}">Bookings</a></li>
         <!--<li class="{% if nbar == 'whatis11plus' %}active{% endif %}"><a href="{% url 'whatis11plus' %}">What is 11+</a></li>-->
         <li class="{% if nbar == 'findus' %}active{% endif %}"><a href="{% url 'findus' %}">Find us</a></li>
         <!--<li class="{% if nbar == 'testimonials' %}active{% endif %}"><a href="{% url 'testimonials' %}">Testimonials</a></li>-->

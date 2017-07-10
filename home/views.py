@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import smtplib
 from django.shortcuts import render, redirect
 from .forms import ContactForm
 from django.core.mail import send_mail, BadHeaderError
@@ -33,7 +34,10 @@ def bookings(request):
             email = form.cleaned_data['contact_email']
             message = form.cleaned_data['contact_message']
             try:
-                send_mail('Booking query', name + '\n' + message, email, ['admin@example.com'])
+                send_mail(subject='Booking query',
+                          message='Name: ' + name + '\nEmail: ' + email + '\n\n' + message,
+                          recipient_list=['info@just11plus.com'],
+                          from_email='vignesh.uma1@gmail.com')
             except BadHeaderError:
                 return HttpResponse('Invalid header found.')
             return redirect('success')
@@ -43,7 +47,7 @@ def bookings(request):
 
 
 def success(request):
-    return HttpResponse('Success! Thank you for your message.')
+    return render(request, 'home/success.html')
 
 
 def philosophy(request):

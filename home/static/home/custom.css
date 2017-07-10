@@ -35,8 +35,8 @@ div[class^='col-']{
     padding-left:30px;
 }
 
-span.glyphicon-arrow-right{
-    font-size: 3em;
+span.glyphicon-arrow-right .glyphicon-arrow-down{
+    font-size: 2em;
 }
 
 /*
@@ -84,4 +84,9 @@ span.glyphicon-arrow-right{
 
 .footer {
     background-color: lightskyblue;
+}
+
+.form-control {
+    font-size: 18px;
+    font-family: sans-serif;
 }
