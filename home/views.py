@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import ContactForm
-
-# new imports that go at the top of the file
-from django.core.mail import EmailMessage
-from django.shortcuts import redirect
-from django.template import Context
-from django.template.loader import get_template
+from django.core.mail import send_mail, BadHeaderError
+from django.http import HttpResponse, HttpResponseRedirect
 
 
 def index(request):
@@ -28,7 +24,26 @@ def pricing(request):
 
 
 def bookings(request):
-    return render(request, 'home/bookings.html', {'nbar': 'bookings'})
+    if request.method == 'GET':
+        form = ContactForm()
+    else:
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['contact_name']
+            email = form.cleaned_data['contact_email']
+            message = form.cleaned_data['contact_message']
+            try:
+                send_mail('Booking query', name + '\n' + message, email, ['admin@example.com'])
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            return redirect('success')
+    return render(request, "home/bookings.html", {
+        'form': form,
+        'nbar': 'bookings'})
+
+
+def success(request):
+    return HttpResponse('Success! Thank you for your message.')
 
 
 def philosophy(request):
@@ -40,44 +55,9 @@ def whatis11plus(request):
 
 
 def findus(request):
-    form_class = ContactForm
-
-    # TODO - code for emailing
-    '''
-    if request.method == 'POST':
-        form = form_class(data=request.POST)
-
-        if form.is_valid():
-            # store form content into variables
-            contact_name = request.POST.get('contact_name', '')
-            contact_email = request.POST.get('contact_email', '')
-            form_message = request.POST.get('form_message', '')
-
-            # create template with context and render it
-            template = get_template('contact_template.txt')
-            context = Context({
-                'contact_name': contact_name,
-                'contact_email': contact_email,
-                'form_message': form_message
-            })
-            content = template.render(context)
-
-            # subject, body, from, list of 'to', headers
-            email = EmailMessage(
-                "Tuition query from website",
-                content,
-                "Your website" + '',
-                ['youremail@gmail.com'],
-                headers={'Reply-To': contact_email }
-            )
-
-            email.send()
-            return redirect('findus')
-    '''
 
     return render(request, 'home/findus.html', {
         'nbar': 'findus',
-        'form': form_class,
     })
 
 
