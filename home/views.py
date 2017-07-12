@@ -31,11 +31,12 @@ def bookings(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data['contact_name']
+            phone = form.cleaned_data['contact_phone']
             email = form.cleaned_data['contact_email']
             message = form.cleaned_data['contact_message']
             try:
                 send_mail(subject='Booking query',
-                          message='Name: ' + name + '\nEmail: ' + email + '\n\n' + message,
+                          message='Name: ' + name + '\nEmail: ' + email + '\nPhone: ' + phone + '\n' + message,
                           recipient_list=['info@just11plus.com'],
                           from_email='vignesh.uma1@gmail.com')
             except BadHeaderError:
