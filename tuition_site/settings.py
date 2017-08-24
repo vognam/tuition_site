@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home',
+    'django_cleanup',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -120,7 +121,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'home', 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'home', 'media')
 
 # Email
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -131,3 +135,4 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = 'vignesh.uma1@gmail.com'
 EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
 
+LOGIN_REDIRECT_URL = 'account'

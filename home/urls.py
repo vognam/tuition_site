@@ -1,5 +1,9 @@
 from . import views
 from django.conf.urls import url
+from django.contrib import admin
+from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     url(r'^$', views.index, name="index"),
@@ -12,4 +16,10 @@ urlpatterns = [
     url(r'^whatis11plus', views.whatis11plus, name="whatis11plus"),
     url(r'^findus', views.findus, name="findus"),
     url(r'^testimonials', views.testimonials, name="testimonials"),
-]
+    url(r'^login', auth_views.login, {'template_name': 'home/login.html'}, name='login'),
+    url(r'^logout', auth_views.logout, name='logout'),
+    url(r'^account', views.account, name='account'),
+    url(r'^addstudent', views.addstudent, name='addstudent'),
+    url(r'^addtutor', views.addtutor, name='addtutor'),
+    url(r'^uploadquestions', views.uploadquestions, name='uploadquestions'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

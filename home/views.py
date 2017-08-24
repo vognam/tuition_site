@@ -6,6 +6,15 @@ from django.shortcuts import render, redirect
 from .forms import ContactForm
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from .forms import StudentForm, TutorForm
+
+from.models import Question
+import zipfile as zf
+import shutil
+import sqlite3
+import os
+from django.core.files import File
 
 
 def index(request):
@@ -68,3 +77,109 @@ def findus(request):
 
 def testimonials(request):
     return render(request, 'home/testimonials.html', {'nbar': 'testimonials'})
+
+
+def login(request):
+    return render(request, 'home/login.html')
+
+@login_required()
+def account(request):
+    return render(request, 'account/account.html')
+
+
+@login_required()
+def addstudent(request):
+    if request.method == 'POST':
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.save()
+            return redirect('account')
+    else:
+        form = StudentForm()
+    return render(request, 'account/addstudent.html', {'form': form})
+
+
+@login_required()
+def addtutor(request):
+    if request.method == 'POST':
+        form = TutorForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.save()
+            return redirect('account')
+    else:
+        form = TutorForm()
+    return render(request, 'account/addtutor.html', {'form': form})
+
+
+@login_required()
+def uploadquestions(request):
+    if request.method == 'POST' and request.FILES['myfile']:
+        myfile = request.FILES['myfile']
+        error = handle_file(myfile)
+        print(error)
+        return render(request, 'account/uploadquestions.html', {
+            'uploaded_file_url': error
+        })
+    return render(request, 'account/uploadquestions.html')
+
+
+# handle the uploaded file
+# unzip file, get all questions from DB, save them as models
+def handle_file(file):
+    try:
+        # extract zip into a folder
+        if os.path.isdir('./extraction'):
+            shutil.rmtree('./extraction')
+        input_zip = zf.ZipFile(file, 'r')
+        input_zip.extractall('./extraction')
+
+        # see if the database exists and connect to it
+        if os.path.isfile('./extraction/Categoriser-master/data.db'):
+            db = sqlite3.connect('./extraction/Categoriser-master/data.db')
+            cursor = db.cursor()
+            cursor.execute('SELECT * FROM questions')
+            all_rows = cursor.fetchall()
+
+            last_id = get_last_qid()
+            rename_questions(last_id)
+
+            for row in all_rows:
+                last_id += 1
+                print('./extraction/Categoriser-master{}'.format(row[7][1:]))
+                print(os.path.basename(row[7]))
+                question = Question(category=row[1], difficulty=row[2], out_of=row[3],
+                                    answer=row[6])
+                question.image.save(
+                    'QID{}.jpg'.format(last_id),
+                    File(open('./extraction/Categoriser-master/questions/QID{}.jpg'.format(str(last_id))))
+                )
+                question.save()
+            db.close()
+            return 'Uploaded success!'
+    except Exception as e:
+        return 'Upload failed: ' + str(e)
+
+
+def get_last_qid():
+    print('getting last id')
+    all_questions = Question.objects.all()
+    if len(all_questions) == 0:
+        return 0
+    else:
+        path = os.path.basename(str(all_questions[len(all_questions)-1].image))
+        print('got last id {}'.format(path))
+        return int(path[3:-4])
+
+
+def rename_questions(last_id):
+    print('renaming files')
+    folder = './extraction/Categoriser-master/questions'
+    for filename in os.listdir(folder):
+        if filename.endswith('.jpg'):
+            print('first file doing')
+            last_id += 1
+            print('file is {}/{}'.format(folder, filename))
+            os.rename('{}/{}'.format(folder, filename), '{}/QID{}.jpg'.format(folder, last_id))
+            print('first file done')

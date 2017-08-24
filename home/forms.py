@@ -1,5 +1,5 @@
 from django import forms
-
+from .models import Student, Tutor
 
 class ContactForm(forms.Form):
     contact_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'John Smith'}),
@@ -11,3 +11,17 @@ class ContactForm(forms.Form):
         required=True,
         widget=forms.Textarea(attrs={'class': 'form-control'})
     )
+
+
+class StudentForm(forms.ModelForm):
+
+    class Meta:
+        model = Student
+        fields = ('first_name', 'last_name', 'tutor', 'classID',)
+
+
+class TutorForm(forms.ModelForm):
+
+    class Meta:
+        model = Tutor
+        fields = ('first_name', 'last_name',)
