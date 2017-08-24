@@ -4,4 +4,6 @@ __pycache__
 .idea
 /extraction
 /home/media/questions/*
+# but not the questions folder itself:
+!home/media/questions/.gitkeep
 /venv
