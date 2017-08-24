@@ -142,20 +142,24 @@ def handle_file(file):
             cursor.execute('SELECT * FROM questions')
             all_rows = cursor.fetchall()
 
+            for row in all_rows:
+                print(row)
+
             last_id = get_last_qid()
             rename_questions(last_id)
 
             for row in all_rows:
+
                 last_id += 1
                 print('./extraction/Categoriser-master{}'.format(row[7][1:]))
                 print(os.path.basename(row[7]))
                 question = Question(category=row[1], difficulty=row[2], out_of=row[3],
                                     answer=row[6])
+                question.save()
                 question.image.save(
                     'QID{}.jpg'.format(last_id),
-                    File(open('./extraction/Categoriser-master/questions/QID{}.jpg'.format(str(last_id))))
+                    File(open('./extraction/Categoriser-master/questions/QID{}.jpg'.format(last_id), str('rb')))
                 )
-                question.save()
             db.close()
             return 'Uploaded success!'
     except Exception as e:
