@@ -15,6 +15,7 @@ import shutil
 import sqlite3
 import os
 from django.core.files import File
+import re
 
 
 def index(request):
@@ -178,12 +179,24 @@ def get_last_qid():
 
 
 def rename_questions(last_id):
-    print('renaming files')
+    print('renaming files - last_id = ' + str(last_id))
     folder = './extraction/Categoriser-master/questions'
-    for filename in os.listdir(folder):
+
+    # natural sort and reverse order the list of questions
+    lst = os.listdir(folder)
+    lst = natural_sort(lst)
+    lst.reverse()
+
+    for filename in lst:
         if filename.endswith('.jpg'):
-            print('first file doing')
-            last_id += 1
+            # print('first file doing')
+            # last_id += 1
+            question_id = int(filename[3:-4])
             print('file is {}/{}'.format(folder, filename))
-            os.rename('{}/{}'.format(folder, filename), '{}/QID{}.jpg'.format(folder, last_id))
-            print('first file done')
+            os.rename('{}/{}'.format(folder, filename), '{}/QID{}.jpg'.format(folder, question_id + last_id))
+
+
+def natural_sort(l):
+    convert = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
+    return sorted(l, key = alphanum_key)
