@@ -1,0 +1,14 @@
+{% extends 'home/base.html' %}
+
+{% block body %}
+
+    <div class="container">
+        <h1 class="page-header">Select a student to generate a pack for</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ students.as_p }}
+            <button type="submit">Generate Pack</button>
+        </form>
+    </div>
+
+{% endblock %}

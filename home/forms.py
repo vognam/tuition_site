@@ -25,3 +25,7 @@ class TutorForm(forms.ModelForm):
     class Meta:
         model = Tutor
         fields = ('first_name', 'last_name',)
+
+
+class StudentChoiceForm(forms.Form):
+    students = forms.ModelChoiceField(queryset=Student.objects.all())

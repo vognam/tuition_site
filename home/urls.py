@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^addstudent', views.addstudent, name='addstudent'),
     url(r'^addtutor', views.addtutor, name='addtutor'),
     url(r'^uploadquestions', views.uploadquestions, name='uploadquestions'),
+    url(r'^generatepack', views.generatepack, name='generatepack'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

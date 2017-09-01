@@ -7,7 +7,7 @@ from .forms import ContactForm
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .forms import StudentForm, TutorForm
+from .forms import StudentForm, TutorForm, StudentChoiceForm
 
 from.models import Question
 import zipfile as zf
@@ -167,6 +167,7 @@ def handle_file(file):
         return 'Upload failed: ' + str(e)
 
 
+# Get the last question id
 def get_last_qid():
     print('getting last id')
     all_questions = Question.objects.all()
@@ -178,6 +179,7 @@ def get_last_qid():
         return int(path[3:-4])
 
 
+# Rename the question jpgs in the uploaded file
 def rename_questions(last_id):
     print('renaming files - last_id = ' + str(last_id))
     folder = './extraction/Categoriser-master/questions'
@@ -196,7 +198,24 @@ def rename_questions(last_id):
             os.rename('{}/{}'.format(folder, filename), '{}/QID{}.jpg'.format(folder, question_id + last_id))
 
 
+# sort numerically
 def natural_sort(l):
     convert = lambda text: int(text) if text.isdigit() else text.lower()
     alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
     return sorted(l, key = alphanum_key)
+
+
+@login_required()
+def generatepack(request):
+
+    if request.method == 'POST':
+        form = StudentChoiceForm(request.POST)
+        if form.is_valid():
+
+            return redirect('generatepack')
+    else:
+        form = StudentChoiceForm()
+
+    return render(request, 'account/generatepack.html',
+                  {'students': form,
+    })
