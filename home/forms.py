@@ -1,5 +1,7 @@
 from django import forms
-from .models import Student, Tutor
+from .models import Student, QuestionDone
+from django.contrib.auth.models import User
+
 
 class ContactForm(forms.Form):
     contact_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'John Smith'}),
@@ -17,15 +19,24 @@ class StudentForm(forms.ModelForm):
 
     class Meta:
         model = Student
-        fields = ('first_name', 'last_name', 'tutor', 'classID',)
-
-
-class TutorForm(forms.ModelForm):
-
-    class Meta:
-        model = Tutor
-        fields = ('first_name', 'last_name',)
+        fields = ('first_name', 'last_name', 'classID',)
 
 
 class StudentChoiceForm(forms.Form):
-    students = forms.ModelChoiceField(queryset=Student.objects.all())
+
+    students = forms.ModelChoiceField(queryset=Student.objects.filter(classID__tutor=0))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super(StudentChoiceForm, self).__init__(*args, **kwargs)
+        self.fields['students'].queryset = Student.objects.filter(classID__tutor=self.user.id)
+
+
+class InputScoreForm(forms.ModelForm):
+
+    class Meta:
+        model = QuestionDone
+        fields = ('student', 'question', 'score',)
+
+    # TODO validate score is between -1 and out_of
+

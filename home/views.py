@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import smtplib
 from django.shortcuts import render, redirect
 from .forms import ContactForm
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth.decorators import login_required
-from .forms import StudentForm, TutorForm, StudentChoiceForm
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .forms import StudentForm, StudentChoiceForm, InputScoreForm
+from django.core.urlresolvers import reverse
+from .viewfunctions import *
+#from django.forms import modelformset_factory
+from django.forms import inlineformset_factory
 
-from.models import Question
+from.models import Question, QuestionDone, Student
 import zipfile as zf
 import shutil
 import sqlite3
@@ -17,6 +20,7 @@ import os
 from django.core.files import File
 import re
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def index(request):
     return render(request, 'home/index.html', {'nbar': 'home'})
@@ -88,12 +92,13 @@ def account(request):
     return render(request, 'account/account.html')
 
 
-@login_required()
+@user_passes_test(lambda u: u.is_superuser)
 def addstudent(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
+            post.classID.tutor = request.user
             post.save()
             return redirect('account')
     else:
@@ -101,121 +106,143 @@ def addstudent(request):
     return render(request, 'account/addstudent.html', {'form': form})
 
 
-@login_required()
-def addtutor(request):
-    if request.method == 'POST':
-        form = TutorForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.save()
-            return redirect('account')
-    else:
-        form = TutorForm()
-    return render(request, 'account/addtutor.html', {'form': form})
-
-
-@login_required()
+@user_passes_test(lambda u: u.is_superuser)
 def uploadquestions(request):
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
         error = handle_file(myfile)
         print(error)
-        return render(request, 'account/uploadquestions.html', {
-            'uploaded_file_url': error
+        request.session['error'] = error
+        return HttpResponseRedirect(reverse('uploadquestions'))
+
+        #return render(request, 'account/uploadquestions.html', {
+        #    'uploaded_file_url': error
+        #})
+    return render(request, 'account/uploadquestions.html', {
+            'uploaded_file_url': request.session.get('error', 'No file uploaded')
         })
-    return render(request, 'account/uploadquestions.html')
-
-
-# handle the uploaded file
-# unzip file, get all questions from DB, save them as models
-def handle_file(file):
-    try:
-        # extract zip into a folder
-        if os.path.isdir('./extraction'):
-            shutil.rmtree('./extraction')
-        input_zip = zf.ZipFile(file, 'r')
-        input_zip.extractall('./extraction')
-
-        # see if the database exists and connect to it
-        if os.path.isfile('./extraction/Categoriser-master/data.db'):
-            db = sqlite3.connect('./extraction/Categoriser-master/data.db')
-            cursor = db.cursor()
-            cursor.execute('SELECT * FROM questions')
-            all_rows = cursor.fetchall()
-
-            for row in all_rows:
-                print(row)
-
-            last_id = get_last_qid()
-            rename_questions(last_id)
-
-            for row in all_rows:
-
-                last_id += 1
-                print('./extraction/Categoriser-master{}'.format(row[7][1:]))
-                print(os.path.basename(row[7]))
-                question = Question(category=row[1], difficulty=row[2], out_of=row[3],
-                                    answer=row[6])
-                question.save()
-                question.image.save(
-                    'QID{}.jpg'.format(last_id),
-                    File(open('./extraction/Categoriser-master/questions/QID{}.jpg'.format(last_id), str('rb')))
-                )
-            db.close()
-            return 'Uploaded success!'
-    except Exception as e:
-        return 'Upload failed: ' + str(e)
-
-
-# Get the last question id
-def get_last_qid():
-    print('getting last id')
-    all_questions = Question.objects.all()
-    if len(all_questions) == 0:
-        return 0
-    else:
-        path = os.path.basename(str(all_questions[len(all_questions)-1].image))
-        print('got last id {}'.format(path))
-        return int(path[3:-4])
-
-
-# Rename the question jpgs in the uploaded file
-def rename_questions(last_id):
-    print('renaming files - last_id = ' + str(last_id))
-    folder = './extraction/Categoriser-master/questions'
-
-    # natural sort and reverse order the list of questions
-    lst = os.listdir(folder)
-    lst = natural_sort(lst)
-    lst.reverse()
-
-    for filename in lst:
-        if filename.endswith('.jpg'):
-            # print('first file doing')
-            # last_id += 1
-            question_id = int(filename[3:-4])
-            print('file is {}/{}'.format(folder, filename))
-            os.rename('{}/{}'.format(folder, filename), '{}/QID{}.jpg'.format(folder, question_id + last_id))
-
-
-# sort numerically
-def natural_sort(l):
-    convert = lambda text: int(text) if text.isdigit() else text.lower()
-    alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
-    return sorted(l, key = alphanum_key)
 
 
 @login_required()
 def generatepack(request):
 
     if request.method == 'POST':
-        form = StudentChoiceForm(request.POST)
-        if form.is_valid():
-
-            return redirect('generatepack')
+        if 'generatepack' in request.POST:
+            form = StudentChoiceForm(data=request.POST, user=request.user)
+            if form.is_valid():
+                createPDF(student=form.cleaned_data['students'])
+                return HttpResponseRedirect('generatepack')
+        elif 'viewhomework' in request.POST:
+            form = StudentChoiceForm(data=request.POST, user=request.user)
+            if form.is_valid():
+                # create lists of all the homeworks and their dates
+                homeworks =[]
+                dates = []
+                links = []
+                student = form.cleaned_data['students']
+                folder = os.path.join(BASE_DIR, 'home', 'media', 'homework',
+                                         str(student.classID.time), str(student.id))
+                if os.path.exists(folder):
+                    for file in os.listdir(folder):
+                        homeworks.append(file)
+                        date = file[-14:]
+                        date = date[:-4]
+                        dates.append(date)
+                        links.append(os.path.join('media', 'homework', str(student.classID.time), str(student.id), file))
+                # order from newest to oldest
+                dates.reverse()
+                homeworks.reverse()
+                links.reverse()
+                homeworks = zip(dates, homeworks, links)
+                return render(request, 'account/generatepack.html', {
+                    'students': form,
+                    'homeworks': homeworks,
+                })
+        else:
+            form = StudentChoiceForm(user=request.user)
     else:
-        form = StudentChoiceForm()
+        form = StudentChoiceForm(user=request.user)
 
     return render(request, 'account/generatepack.html',
                   {'students': form,
     })
+
+
+@login_required()
+def inputscores(request):
+    if request.method == 'POST':
+        if 'selectstudent' in request.POST:
+
+            form = StudentChoiceForm(data=request.POST, user=request.user)
+
+            if form.is_valid():
+
+                # create forms
+                student = form.cleaned_data['students']
+                request.session['studentID'] = student.id
+
+                queryset = QuestionDone.objects.filter(score=-1, student=student)
+
+
+                QuestionDoneFormSet = inlineformset_factory(Student, QuestionDone, fields=('score',))
+                formset = QuestionDoneFormSet(instance=student, queryset=queryset)
+
+                # create dict of questions
+                questions = []
+                for q in queryset:
+                    questions.append(q.question)
+
+                questions_and_formset = zip(questions, formset)
+                form = StudentChoiceForm(user=request.user)
+
+                return render(request, 'account/inputscores.html',
+                              {'students': form,
+                               'questions_and_formset': questions_and_formset,
+                               'formset': formset,
+                               })
+
+        # if scores are inputted
+        elif 'inputscores' in request.POST:
+
+            student = Student.objects.get(id=request.session['studentID'])
+            QuestionDoneFormSet = inlineformset_factory(Student, QuestionDone, fields=('score',))
+            queryset = QuestionDone.objects.filter(score=-1, student=student)
+            formset = QuestionDoneFormSet(request.POST, request.FILES, instance=student, queryset=queryset)
+
+            for form in formset:
+                if form.is_valid():
+                    form.save()
+
+            queryset = QuestionDone.objects.filter(score=-1, student=student)
+
+            QuestionDoneFormSet = inlineformset_factory(Student, QuestionDone, fields=('score',))
+            formset = QuestionDoneFormSet(instance=student, queryset=queryset)
+
+            # create dict of questions
+            questions = []
+            for q in queryset:
+                questions.append(q.question)
+
+            questions_and_formset = zip(questions, formset)
+            form = StudentChoiceForm(user=request.user)
+
+            return render(request, 'account/inputscores.html',
+                          {'students': form,
+                           'questions_and_formset': questions_and_formset,
+                           'formset': formset,
+                           })
+
+        # if something else happens?
+        else:
+            print('hmm not working')
+            form = StudentChoiceForm(user=request.user)
+
+            return render(request, 'account/inputscores.html',
+                          {'students': form,
+                           })
+    else:
+        form = StudentChoiceForm(user=request.user)
+
+        return render(request, 'account/inputscores.html',
+                  {'students': form,
+                   })

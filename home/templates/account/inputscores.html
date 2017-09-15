@@ -1,0 +1,52 @@
+{% extends 'home/base.html' %}
+
+{% load staticfiles %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'home/account.css' %}">
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+
+    <div class="page-header"><h1>Select student and then input their scores</h1></div>
+
+    <h1 class="page-header">Select a student to input scores for</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ students.as_p }}
+        <button type="submit" name="selectstudent">Select Student</button>
+    </form>
+
+    <hr>
+
+    {% if formset %}
+        <form method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        {% for question, form in questions_and_formset %}
+
+            <div class="row vertical-padding">
+                <div class="col-sm-8">
+                    <img class="img-responsive" src="media/{{ question.image }}">
+                </div>
+                <div class="col-sm-4">
+
+                    <p>Answer: {{ question.answer }}</p>
+                    <br><br>
+                    <p> {{ form }} /  {{ question.out_of }}</p>
+
+                </div>
+            </div>
+
+        {% endfor %}
+
+
+
+        <button type="submit" name="inputscores">Input Scores</button>
+        </form>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -52,7 +52,8 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
+
+      <ul class="nav navbar-nav navbar-left">
         <li class="{% if nbar == 'home' %}active{% endif %}"><a href="{% url 'index' %}">Home</a></li>
         <!--<li class="{% if nbar == 'aboutus' %}active{% endif %}"><a href="{% url 'aboutus' %}">Establishment</a></li>-->
         <li class="{% if nbar == 'philosophy' %}active{% endif %}"><a href="{% url 'philosophy' %}">Philosophy</a></li>
@@ -62,7 +63,15 @@
         <!--<li class="{% if nbar == 'whatis11plus' %}active{% endif %}"><a href="{% url 'whatis11plus' %}">What is 11+</a></li>-->
         <li class="{% if nbar == 'findus' %}active{% endif %}"><a href="{% url 'findus' %}">Find us</a></li>
         <!--<li class="{% if nbar == 'testimonials' %}active{% endif %}"><a href="{% url 'testimonials' %}">Testimonials</a></li>-->
+      </ul>
 
+      <ul class="nav navbar-nav navbar-right">
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'account' %}">Account</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+          {% endif %}
       </ul>
     </div>
 

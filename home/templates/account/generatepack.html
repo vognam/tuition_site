@@ -7,8 +7,38 @@
         <form method="post">
             {% csrf_token %}
             {{ students.as_p }}
-            <button type="submit">Generate Pack</button>
+            <button type="submit" name="generatepack">Generate Pack</button>
         </form>
+
+        <hr>
+
+        <h1 class="page-header">Select a student to view homework for</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ students.as_p }}
+            <button type="submit" name="viewhomework">View Homework</button>
+        </form>
+
+        <hr>
+
+        <table class="table table-striped table-responsive">
+            <thead>
+                <tr>
+                    <th>Date homework set on:</th>
+                    <th>Homework PDF</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if homeworks %}
+                    {% for date, homework, link in homeworks%}
+                        <tr>
+                            <td>{{ date }}</td>
+                            <td><a href="{{ link }}">{{ homework }}</a></td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
     </div>
 
 {% endblock %}

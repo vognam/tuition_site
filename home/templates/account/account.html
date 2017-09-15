@@ -1,34 +1,26 @@
 {% extends 'home/base.html' %}
 
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'home/account.css' %}">
+{% endblock %}
+
 {% block body %}
 
     <div class="container center-block text-center">
 
         <div class="page-header"><h1>Account</h1></div>
 
-        <div class="row">
-            <div class="col-xs-12 col-sm-3">
-                <a href="{% url 'addstudent' %}"><button class="btn btn-lg btn-primary">Add Student</button></a>
-            </div>
-            <div class="col-xs-12 col-sm-3">
-                <button class="btn btn-lg btn-primary">View Student</button>
-            </div>
-            <div class="col-xs-12 col-sm-3">
-                <a href="{% url 'addtutor' %}"><button class="btn btn-lg btn-primary">Add Tutor</button></a>
-            </div>
-            <div class="col-xs-12 col-sm-3">
-                <button class="btn btn-lg btn-primary">Add View</button>
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-xs-6">
-                <a href="{% url 'uploadquestions' %}"><button class="btn btn-lg btn-primary">Upload Questions</button></a>
-            </div>
-            <div class="col-xs-6">
-                <a href="{% url 'generatepack' %}"><button class="btn btn-lg btn-primary">Generate Pack</button></a>
-            </div>
-        </div>
+        <a href="{% url 'addstudent' %}"><button class="btn btn-lg btn-primary">Add Student</button></a>
+
+
+        <a href="{% url 'uploadquestions' %}"><button class="btn btn-lg btn-primary">Upload Questions</button></a>
+
+        <a href="{% url 'generatepack' %}"><button class="btn btn-lg btn-primary">Generate Pack</button></a>
+
+        <a href="{% url 'inputscores' %}"><button class="btn btn-lg btn-primary">Input Scores</button></a>
     </div>
 
 {% endblock %}
