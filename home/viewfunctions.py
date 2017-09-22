@@ -175,7 +175,7 @@ def chooseQuestions(student, category):
     topic_student_weakness_two = getWeaknesses(student_weaknesses, topics)
     topics.append(topic_student_weakness_two)
 
-    topics = filter(None, topics)
+    topics = list(filter(None, topics))
 
     # Now to choose the questions based on the topics :)
     year_group = student.classID.year
