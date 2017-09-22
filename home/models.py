@@ -18,6 +18,15 @@ class Student(models.Model):
         return '%s %s' % (self.first_name, self.last_name)
 
 
+class Attendance(models.Model):
+    student = models.ForeignKey('Student', on_delete=models.CASCADE)
+    has_attended = models.BooleanField()
+    date = models.DateField()
+
+    def __str__(self):
+        return '%s : %s' % (self.student.first_name, self.date)
+
+
 class Question(models.Model):
 
     CATEGORIES = (
@@ -53,14 +62,14 @@ class Question(models.Model):
     )
 
     DIFFICULTIES = (
-        ('Hard', 'Hard'),
-        ('Medium', 'Medium'),
-        ('Easy', 'Easy'),
+        (6, 'Hard'),
+        (5, 'Medium'),
+        (4, 'Easy'),
     )
 
-    category = models.CharField(choices=CATEGORIES, max_length=20)
-    difficulty = models.CharField(choices=DIFFICULTIES, max_length=15)
-    out_of = models.IntegerField()
+    category = models.CharField(choices=CATEGORIES, max_length=100, null=False)
+    difficulty = models.IntegerField(choices=DIFFICULTIES, null=False)
+    out_of = models.IntegerField(null=False)
     answer = models.CharField(max_length=25, blank=True)
     image = models.ImageField(upload_to='questions', height_field="height_field",
                               width_field="width_field")
@@ -79,7 +88,7 @@ class QuestionDone(models.Model):
     score = models.IntegerField(default=-1)
 
     def __str__(self):
-        return '{} {}'.format(self.student.first_name, self.date)
+        return '%s %s' % (self.student.first_name, str(self.date))
 
 
 class Class(models.Model):
@@ -98,8 +107,18 @@ class Class(models.Model):
         (10, 'Sunday 19:00 - 21:00'),
     )
 
+    # NOTE: if adding extra years, make sure
+    # a) corresponding difficulty of questions are present
+    # b) when choosing mixed questions this is taken account for
+    YEAR = (
+        (4, 4),
+        (5, 5),
+    )
+
+    year = models.IntegerField(choices=YEAR, default=5)
     time = models.IntegerField(choices=TIMES)
     tutor = models.ForeignKey(User)
 
     def __str__(self):
-        return '{} {}'.format(self.time, self.tutor.first_name)
+        return '%s - %s' % (str(self.get_time_display()), str(self.tutor))
+

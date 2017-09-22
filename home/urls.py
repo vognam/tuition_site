@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^uploadquestions', views.uploadquestions, name='uploadquestions'),
     url(r'^generatepack', views.generatepack, name='generatepack'),
     url(r'^inputscores', views.inputscores, name='inputscores'),
+    url(r'^attendance', views.attendance, name='attendance'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

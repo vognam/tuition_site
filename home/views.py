@@ -2,17 +2,16 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect
-from .forms import ContactForm
+from .forms import ContactForm, ClassChoiceForm
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .forms import StudentForm, StudentChoiceForm, InputScoreForm
+from .forms import StudentForm, StudentChoiceForm, CategoryChoiceForm
 from django.core.urlresolvers import reverse
 from .viewfunctions import *
-#from django.forms import modelformset_factory
 from django.forms import inlineformset_factory
 
-from.models import Question, QuestionDone, Student
+from.models import Question, QuestionDone, Student, Attendance
 import zipfile as zf
 import shutil
 import sqlite3
@@ -125,12 +124,14 @@ def uploadquestions(request):
 
 @login_required()
 def generatepack(request):
+    categories = CategoryChoiceForm()
 
     if request.method == 'POST':
         if 'generatepack' in request.POST:
             form = StudentChoiceForm(data=request.POST, user=request.user)
-            if form.is_valid():
-                createPDF(student=form.cleaned_data['students'])
+            form_category = CategoryChoiceForm(data=request.POST)
+            if form.is_valid() and form_category.is_valid():
+                createPDF(student=form.cleaned_data['students'], category=form_category.cleaned_data['choice_field'], user=request.user)
                 return HttpResponseRedirect('generatepack')
         elif 'viewhomework' in request.POST:
             form = StudentChoiceForm(data=request.POST, user=request.user)
@@ -157,6 +158,7 @@ def generatepack(request):
                 return render(request, 'account/generatepack.html', {
                     'students': form,
                     'homeworks': homeworks,
+                    'categories': categories,
                 })
         else:
             form = StudentChoiceForm(user=request.user)
@@ -165,6 +167,7 @@ def generatepack(request):
 
     return render(request, 'account/generatepack.html',
                   {'students': form,
+                   'categories': categories,
     })
 
 
@@ -183,8 +186,7 @@ def inputscores(request):
 
                 queryset = QuestionDone.objects.filter(score=-1, student=student)
 
-
-                QuestionDoneFormSet = inlineformset_factory(Student, QuestionDone, fields=('score',))
+                QuestionDoneFormSet = inlineformset_factory(Student, QuestionDone, fields=('score',), can_delete=True, extra=0)
                 formset = QuestionDoneFormSet(instance=student, queryset=queryset)
 
                 # create dict of questions
@@ -200,22 +202,25 @@ def inputscores(request):
                                'questions_and_formset': questions_and_formset,
                                'formset': formset,
                                })
+            else:
+                return render(request, 'account/inputscores.html',
+                              {'students': form,
+                               })
 
         # if scores are inputted
         elif 'inputscores' in request.POST:
 
             student = Student.objects.get(id=request.session['studentID'])
-            QuestionDoneFormSet = inlineformset_factory(Student, QuestionDone, fields=('score',))
+            QuestionDoneFormSet = inlineformset_factory(Student, QuestionDone, fields=('score',), extra=0)
             queryset = QuestionDone.objects.filter(score=-1, student=student)
-            formset = QuestionDoneFormSet(request.POST, request.FILES, instance=student, queryset=queryset)
+            formset = QuestionDoneFormSet(request.POST, request.FILES, instance=student)
 
-            for form in formset:
-                if form.is_valid():
-                    form.save()
+            if formset.is_valid():
+                formset.save()
 
             queryset = QuestionDone.objects.filter(score=-1, student=student)
 
-            QuestionDoneFormSet = inlineformset_factory(Student, QuestionDone, fields=('score',))
+            QuestionDoneFormSet = inlineformset_factory(Student, QuestionDone, fields=('score',), extra=0)
             formset = QuestionDoneFormSet(instance=student, queryset=queryset)
 
             # create dict of questions
@@ -246,3 +251,28 @@ def inputscores(request):
         return render(request, 'account/inputscores.html',
                   {'students': form,
                    })
+
+@user_passes_test(lambda u: u.is_superuser)
+def attendance(request):
+    classChoiceForm = ClassChoiceForm(user=request.user)
+    if request.method == 'POST':
+        classChoiceForm = ClassChoiceForm(data=request.POST, user=request.user)
+        if classChoiceForm.is_valid():
+
+            classID = classChoiceForm.cleaned_data['classes'].id
+            students = Student.objects.filter(classID=classID)
+
+            attendanceForms = createAttendanceForms(students)
+
+            classChoiceForm = ClassChoiceForm(user=request.user)
+
+            return render(request, 'account/attendance.html',
+                          {'form': classChoiceForm,
+                           'students': students,
+                           'attendanceForms': attendanceForms,
+
+                          })
+    else:
+        return render(request, 'account/attendance.html',
+                      {'form': classChoiceForm,
+                       })

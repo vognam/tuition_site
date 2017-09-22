@@ -7,6 +7,7 @@
         <form method="post">
             {% csrf_token %}
             {{ students.as_p }}
+            {{ categories.as_p }}
             <button type="submit" name="generatepack">Generate Pack</button>
         </form>
 

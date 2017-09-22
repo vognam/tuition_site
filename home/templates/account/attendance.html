@@ -1,0 +1,31 @@
+{% extends 'home/base.html' %}
+
+{% block body %}
+
+    <div class="container center-block">
+        <div class="page-header">
+            <h1>Attendance</h1>
+        </div>
+        <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Select Class</button>
+        </form>
+
+        {% if attendanceForms %}
+            {{ attendanceForms.management_form }}
+
+            <ul>
+            {% for formset in attendanceForms %}
+                <li>
+                {{ formset.instance.student }} :
+                {{ formset.instance.date }} :
+                {{ formset.has_attended }}
+                </li>
+            {% endfor %}
+            </ul>
+
+        {% endif %}
+    </div>
+
+{% endblock %}

@@ -32,10 +32,13 @@
                     <img class="img-responsive" src="media/{{ question.image }}">
                 </div>
                 <div class="col-sm-4">
-
+                    {{ form.id }}
                     <p>Answer: {{ question.answer }}</p>
                     <br><br>
-                    <p> {{ form }} /  {{ question.out_of }}</p>
+                    <p> {{ form.score }} /  {{ question.out_of }}</p>
+                    {% if formset.can_delete %}
+                        <p>Delete : {{ form.DELETE }}</p>
+                    {% endif %}
 
                 </div>
             </div>

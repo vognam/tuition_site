@@ -1,5 +1,5 @@
 from django import forms
-from .models import Student, QuestionDone
+from .models import Student, QuestionDone, Question, Class
 from django.contrib.auth.models import User
 
 
@@ -40,3 +40,15 @@ class InputScoreForm(forms.ModelForm):
 
     # TODO validate score is between -1 and out_of
 
+
+class ClassChoiceForm(forms.Form):
+    classes = forms.ModelChoiceField(queryset=Class.objects.filter())
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super(ClassChoiceForm, self).__init__(*args, **kwargs)
+        self.fields['classes'].queryset = Class.objects.filter(tutor=self.user.id)
+
+
+class CategoryChoiceForm(forms.Form):
+    choice_field = forms.ChoiceField(choices=Question.CATEGORIES)
