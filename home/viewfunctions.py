@@ -260,6 +260,9 @@ def getMixQuestions(student, new_questions, selected_questions, topics):
         elif difficulty_average_score < 0.4 and frequent_difficulty != min(Question.DIFFICULTIES, key=itemgetter(1))[0]:
             frequent_difficulty -= 1
         # otherwise frequent_difficulty stays the same
+    else:
+        if Question.CATEGORIES.index((topic, topic)) > Question.CATEGORIES.index((selected_topic, selected_topic)):
+            frequent_difficulty -= 1
 
     marks = 0
     max_marks = 20
@@ -282,8 +285,6 @@ def getMixQuestions(student, new_questions, selected_questions, topics):
 # get questions to the corresponding weakness
 def getGroupAndStudentQuestions(year_group, new_questions, selected_questions, topic, selected_topic):
     # if the topic has been covered, choose standard questions, else choose easier questions
-    if Question.CATEGORIES.index((topic, topic)) > Question.CATEGORIES.index((selected_topic, selected_topic)):
-        year_group -= 1
 
     marks = 0
     max_marks = 20
