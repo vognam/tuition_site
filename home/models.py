@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 
 class Student(models.Model):
     first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50, blank=True, default='')
     classID = models.ForeignKey('Class', null=True, on_delete=models.CASCADE)
     start_date = models.DateTimeField(auto_now_add=True)
 
