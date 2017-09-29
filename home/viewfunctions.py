@@ -190,7 +190,7 @@ def chooseQuestions(student, category):
         if len(topics) > 2:
             new_questions = getGroupAndStudentQuestions(year_group, new_questions, selected_questions, topics[2], category)
         else:
-            new_questions = getMixQuestions(student, new_questions, selected_questions, topics)
+            new_questions = getMixQuestions(student, new_questions, selected_questions, topics, category)
     else:
         if len(topics) == 4:
             new_questions = getGroupAndStudentQuestions(year_group, new_questions, selected_questions, topics[1], category)
@@ -199,18 +199,18 @@ def chooseQuestions(student, category):
         elif len(topics) == 3:
             new_questions = getGroupAndStudentQuestions(year_group, new_questions, selected_questions, topics[1], category)
             new_questions = getGroupAndStudentQuestions(year_group, new_questions, selected_questions, topics[2], category)
-            new_questions = getMixQuestions(student, new_questions, selected_questions, topics)
+            new_questions = getMixQuestions(student, new_questions, selected_questions, topics, category)
         elif len(topics) == 2:
             new_questions = getGroupAndStudentQuestions(year_group, new_questions, selected_questions, topics[1], category)
-            new_questions = getMixQuestions(student, new_questions, selected_questions, topics)
-            new_questions = getMixQuestions(student, new_questions, selected_questions, topics)
+            new_questions = getMixQuestions(student, new_questions, selected_questions, topics, category)
+            new_questions = getMixQuestions(student, new_questions, selected_questions, topics, category)
         else:
-            new_questions = getMixQuestions(student, new_questions, selected_questions, topics)
-            new_questions = getMixQuestions(student, new_questions, selected_questions, topics)
-            new_questions = getMixQuestions(student, new_questions, selected_questions, topics)
+            new_questions = getMixQuestions(student, new_questions, selected_questions, topics, category)
+            new_questions = getMixQuestions(student, new_questions, selected_questions, topics, category)
+            new_questions = getMixQuestions(student, new_questions, selected_questions, topics, category)
 
     # and an extra page of mixed questions!
-    new_questions = getMixQuestions(student, new_questions, selected_questions, topics)
+    new_questions = getMixQuestions(student, new_questions, selected_questions, topics, category)
 
     # quick test to see if right topics
 
@@ -229,7 +229,7 @@ def chooseQuestions(student, category):
     return selected_questions
 
 
-def getMixQuestions(student, new_questions, selected_questions, topics):
+def getMixQuestions(student, new_questions, selected_questions, topics, selected_topic):
     current_year = student.classID.year
     topic = getRandomCategory(topics)
     topics.append(topic)
